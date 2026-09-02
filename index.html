@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Detroit: Become Human script</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+:root {
+    --bg: #fff;
+    --bg2: #f6f6f6;
+    --line: #e6e6e6;
+    --text: #111;
+    --text2: #555;
+    --dim: #999;
+    --mark: #fff3a8;
+    color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg: #111;
+        --bg2: #181818;
+        --line: #262626;
+        --text: #ededed;
+        --text2: #a3a3a3;
+        --dim: #666;
+        --mark: #4a4000;
+        color-scheme: dark;
+    }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 14px/1.6 Inter, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+::selection { background: var(--mark); }
+a { color: inherit; }
+.mono { font-family: "JetBrains Mono", ui-monospace, monospace; }
+button, input, select { font: inherit; color: inherit; }
+
+header { position: sticky; top: 0; z-index: 10; background: var(--bg); border-bottom: 1px solid var(--line); }
+.wrap { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+.top { display: flex; align-items: center; gap: 24px; height: 52px; }
+.brand { margin-right: auto; white-space: nowrap; font-weight: 500; }
+.brand span { color: var(--dim); font-weight: 400; margin-left: 10px; }
+.controls { display: flex; align-items: center; gap: 16px; }
+.search { position: relative; }
+.search input { width: 300px; height: 32px; padding: 0 44px 0 10px; background: none; border: 1px solid var(--line); border-radius: 4px; outline: 0; }
+.search input:focus { border-color: var(--text2); }
+.search input::placeholder { color: var(--dim); }
+.search kbd { position: absolute; right: 8px; top: 8px; font: 11px/1 "JetBrains Mono", monospace; color: var(--dim); border: 1px solid var(--line); border-radius: 3px; padding: 2px 5px; }
+select { height: 32px; padding: 0 10px; background: var(--bg); border: 1px solid var(--line); border-radius: 4px; outline: 0; cursor: pointer; }
+option { background: var(--bg); color: var(--text); }
+select:focus { border-color: var(--text2); }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 4px; overflow: hidden; }
+.seg button { height: 30px; padding: 0 12px; border: 0; background: none; color: var(--dim); cursor: pointer; }
+.seg button + button { border-left: 1px solid var(--line); }
+.seg button.on { background: var(--bg2); color: var(--text); }
+.toggle { display: inline-flex; align-items: center; gap: 8px; color: var(--text2); cursor: pointer; user-select: none; white-space: nowrap; }
+.toggle input { margin: 0; width: 14px; height: 14px; accent-color: var(--text); }
+
+main { padding: 32px 0 120px; }
+.meta { color: var(--dim); font-size: 13px; margin-bottom: 8px; }
+.meta b { color: var(--text2); font-weight: 500; }
+
+.chapter { position: sticky; top: 52px; z-index: 2; display: flex; gap: 12px; background: var(--bg); padding: 28px 0 8px; border-bottom: 1px solid var(--line); font-size: 12px; }
+.chapter .c { color: var(--text2); }
+.chapter .n { color: var(--dim); }
+
+.line { display: grid; grid-template-columns: 140px 1fr auto; gap: 20px; align-items: baseline; padding: 8px 0; border-bottom: 1px solid var(--line); cursor: pointer; }
+.line:hover { background: var(--bg2); }
+.spk { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 12px; color: var(--text2); text-align: right; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.spk.ui { color: var(--dim); }
+.text { margin: 0; white-space: pre-wrap; }
+.key { font-size: 11px; color: var(--dim); opacity: 0; }
+.line:hover .key, .line.open .key { opacity: 1; }
+
+.more { grid-column: 2 / -1; padding: 8px 0 4px; cursor: default; }
+.tr { display: grid; grid-template-columns: 140px 1fr; gap: 20px; font-size: 13px; padding: 3px 0; color: var(--text2); }
+.tr .l { color: var(--dim); }
+.tr .v { white-space: pre-wrap; }
+.tr.cur { color: var(--text); }
+
+table { width: 100%; border-collapse: collapse; }
+th { position: sticky; top: 52px; z-index: 2; text-align: left; background: var(--bg); color: var(--dim); font-weight: 400; font-size: 12px; padding: 8px 10px; border-bottom: 1px solid var(--line); }
+td { padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+tr.line { display: table-row; }
+tr.line:hover td { background: var(--bg2); }
+td.k { font-size: 12px; color: var(--dim); white-space: nowrap; }
+td.s { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 12px; color: var(--text2); white-space: nowrap; }
+td .more { padding: 10px 0 0; }
+
+mark { background: var(--mark); color: inherit; }
+.empty { color: var(--dim); padding: 80px 0; }
+.load { display: block; margin: 24px 0 0; height: 32px; padding: 0 14px; background: none; border: 1px solid var(--line); border-radius: 4px; color: var(--text2); cursor: pointer; }
+.load:hover { border-color: var(--text2); color: var(--text); }
+footer { color: var(--dim); font-size: 12px; padding: 24px; border-top: 1px solid var(--line); }
+
+@media (max-width: 860px) {
+    .top { height: auto; flex-wrap: wrap; padding: 12px 0; gap: 12px; }
+    .controls { flex-wrap: wrap; width: 100%; gap: 10px; }
+    .search { width: 100%; }
+    .search input { width: 100%; }
+    .line { grid-template-columns: 1fr; gap: 2px; }
+    .spk { text-align: left; }
+    .key { opacity: 1; }
+    .tr { grid-template-columns: 1fr; gap: 0; }
+    .chapter { position: static; }
+}
+</style>
+</head>
+<body>
+<header><div class="wrap top">
+    <div class="brand">Detroit: Become Human<span>script</span></div>
+    <div class="controls">
+        <label class="search">
+            <input id="q" type="search" placeholder="Search" autocomplete="off" spellcheck="false">
+            <kbd>/</kbd>
+        </label>
+        <select id="lang"></select>
+        <div class="seg"><button id="vScript" class="on">Script</button><button id="vTable">Table</button></div>
+        <label class="toggle"><input id="dlg" type="checkbox" checked>Dialogue only</label>
+    </div>
+</div></header>
+<main class="wrap">
+    <div class="meta" id="meta"></div>
+    <div id="out"></div>
+</main>
+<footer class="wrap">Text from the game's localization containers. Click a line to see it in every language.</footer>
+<script>
+const $ = s => document.querySelector(s);
+const cache = {};
+const per = 400;
+let langs = [], rows = [], view = 'script', page = 0, cur = 'ENG';
+
+async function load(code) {
+    if (!cache[code]) cache[code] = fetch('data/' + code + '.json').then(r => r.json());
+    return cache[code];
+}
+
+const names = { C: 'Connor', K: 'Kara', M: 'Markus' }; // and X, why
+function chapter(key) {
+    const m = /^X(\d{2})(\d{2})([A-Z])/.exec(key);
+    if (!m) return { c: key.split('_')[0], n: '' };
+    return { c: `Chapter ${m[1]} / Scene ${m[2]}`, n: names[m[3]] || '' };
+}
+
+function esc(s) { return s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
+function hl(s, q) {
+    if (!q) return esc(s);
+    const i = s.toLowerCase().indexOf(q);
+    return i < 0 ? esc(s) : esc(s.slice(0, i)) + '<mark>' + esc(s.slice(i, i + q.length)) + '</mark>' + esc(s.slice(i + q.length));
+}
+
+function filtered() {
+    const q = $('#q').value.trim().toLowerCase();
+    const dlg = $('#dlg').checked;
+    return rows.filter(r => (!dlg || (r[0][0] === 'X' && r[2])) && // some are just empty lol
+        (!q || r[2].toLowerCase().includes(q) || r[1].toLowerCase().includes(q) || r[0].toLowerCase().includes(q)));
+}
+
+function render(reset) {
+    if (reset) page = 0;
+    const q = $('#q').value.trim().toLowerCase();
+    const all = filtered();
+    const shown = all.slice(0, (page + 1) * per);
+    $('#meta').innerHTML = `<b>${all.length.toLocaleString()}</b> lines` +
+        (all.length !== rows.length ? ` of ${rows.length.toLocaleString()}` : '') +
+        (q ? ` matching "${esc(q)}"` : '');
+    const out = $('#out');
+    if (!shown.length) { out.innerHTML = '<div class="empty">Nothing matches.</div>'; return; }
+    let h = '';
+    if (view === 'script') {
+        let last = '';
+        for (const r of shown) {
+            const ch = chapter(r[0]);
+            const id = ch.c + ch.n;
+            if (id !== last) { h += `<div class="chapter mono"><span class="c">${esc(ch.c)}</span>${ch.n ? `<span class="n">${esc(ch.n)}</span>` : ''}</div>`; last = id; }
+            const who = r[1] ? `<div class="spk">${hl(r[1], q)}</div>` : `<div class="spk ui">ui</div>`;
+            h += `<div class="line" data-k="${esc(r[0])}">${who}<p class="text">${hl(r[2], q)}</p><div class="key mono">${hl(r[0], q)}</div></div>`;
+        }
+    } else {
+        h = '<table><thead><tr><th>Key</th><th>Speaker</th><th>Line</th></tr></thead><tbody>';
+        for (const r of shown) h += `<tr class="line" data-k="${esc(r[0])}"><td class="k mono">${hl(r[0], q)}</td><td class="s">${hl(r[1], q)}</td><td class="text">${hl(r[2], q)}</td></tr>`;
+        h += '</tbody></table>';
+    }
+    if (shown.length < all.length) h += `<button class="load" id="more">Show ${Math.min(per, all.length - shown.length).toLocaleString()} more</button>`;
+    out.innerHTML = h;
+    const m = $('#more'); if (m) m.onclick = () => { page++; render(false); };
+}
+
+async function expand(el) {
+    const key = el.dataset.k;
+    const open = el.classList.contains('open');
+    document.querySelectorAll('.line.open').forEach(o => { o.classList.remove('open'); o.querySelector('.more')?.remove(); });
+    if (open) return;
+    el.classList.add('open');
+    const box = document.createElement('div');
+    box.className = 'more';
+    (el.tagName === 'TR' ? el.lastElementChild : el).appendChild(box);
+    const parts = [];
+    for (const l of langs) {
+        const r = (await load(l.code)).find(x => x[0] === key);
+        if (!el.classList.contains('open')) return;
+        if (r && r[2]) parts.push(`<div class="tr ${l.code === cur ? 'cur' : ''}"><div class="l">${esc(l.name)}</div><div class="v">${esc(r[2])}</div></div>`);
+        box.innerHTML = parts.join('');
+    }
+}
+
+async function pick(code) {
+    cur = code;
+    localStorage.setItem('lang', code);
+    rows = await load(code);
+    const grp = k => (/^X\d{4}[A-Z]/.exec(k) || [''])[0];
+    rows.sort((a, b) => grp(a[0]) < grp(b[0]) ? -1 : grp(a[0]) > grp(b[0]) ? 1 : 0);
+    render(true);
+}
+
+(async () => {
+    langs = await (await fetch('data/index.json')).json();
+    const sel = $('#lang');
+    for (const l of langs) sel.add(new Option(l.name, l.code));
+    sel.value = localStorage.getItem('lang') || 'ENG';
+    sel.onchange = () => pick(sel.value);
+    let t; $('#q').oninput = () => { clearTimeout(t); t = setTimeout(() => render(true), 120); };
+    $('#dlg').onchange = () => render(true);
+    for (const b of ['vScript', 'vTable']) $('#' + b).onclick = () => {
+        view = b === 'vTable' ? 'table' : 'script';
+        $('#vScript').classList.toggle('on', view === 'script');
+        $('#vTable').classList.toggle('on', view === 'table');
+        render(true);
+    };
+    $('#out').addEventListener('click', e => { const r = e.target.closest('.line'); if (r && !e.target.closest('.more')) expand(r); });
+    document.addEventListener('keydown', e => { if (e.key === '/' && document.activeElement !== $('#q')) { e.preventDefault(); $('#q').focus(); } });
+    pick(sel.value);
+})();
+</script>
+</body>
+</html>
